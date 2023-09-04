@@ -85,7 +85,7 @@ class InfoGatherer:
         :param wordlist: a file with words, separated by new line - potential source for bruteforcing guesses
         :return: None - printed stdout
         """
-        with open('subdomains.txt', 'r') as f:
+        with open(wordlist, 'r') as f:
             for sub in f:
                 try:
                     self.check_subdomain_existence(sub.strip())
@@ -101,12 +101,15 @@ class InfoGatherer:
         with open(f"{wordlist}", 'r') as f:
             for directory in f:
                 try:
-                    response = requests.get(f"{self.domain}/{directory.strip()}")
-                    # print(response.url)
+                    response = requests.get(f"http://{self.domain}/{directory.strip()}")
                     if response.status_code == 200:
                         print(f"Found directory: {directory}")
                     else:
-                        pass
+                        response = requests.get(f"https://{self.domain}/{directory.strip()}")
+                        if response.status_code == 200:
+                            print(f"Found directory: {directory}")
+                        else:
+                            pass
                 except KeyboardInterrupt:
                     sys.exit()
 
